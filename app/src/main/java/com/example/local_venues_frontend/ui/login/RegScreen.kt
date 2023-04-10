@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.local_venues_frontend.ui.data.User
 
 @Preview
 @Composable
@@ -19,6 +20,8 @@ fun RegistrationPage() {
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
 
+    var error by remember { mutableStateOf("") }
+
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -26,6 +29,10 @@ fun RegistrationPage() {
     ) {
         Text(text = "Registration", style = MaterialTheme.typography.h4)
         Spacer(modifier = Modifier.height(16.dp))
+
+        if(error !== "") {
+            Text(text = error, color = MaterialTheme.colors.error)
+        }
 
         OutlinedTextField(
             value = firstName,
@@ -83,35 +90,12 @@ fun RegistrationPage() {
                 if (firstName.isBlank() || lastName.isBlank() || username.isBlank() ||
                     email.isBlank() || password.isBlank() || confirmPassword.isBlank()
                 ) {
-                    // Show error message if any field is empty
-                    // You can handle this based on your app's requirements
-                    // For simplicity, just showing a Snackbar here
-                    // You need to import the Snackbar library from Jetpack Compose
-                    // implementation "com.google.android.material:material:<version>"
-                    // And add the import statement: import androidx.compose.material.Snackbar
-                    // You also need to remember to provide a Scaffold in your main activity
-                    // to host the Snackbar, as it requires a Scaffold for proper display
-                    // You can add Scaffold in your MainActivity.kt file, similar to how it's done for Compose navigation
-                    // Scaffold: https://developer.android.com/reference/kotlin/androidx/compose/material/package-summary#scaffold
-                    // Navigation with Compose: https://developer.android.com/guide/navigation/navigation-compose
-                    // Example: Scaffold to host Snackbar
-                    // remember to import androidx.compose.material.Scaffold
-                    // Scaffold { ... }
-
-                    // Show error Snackbar
-                    // Remember to import androidx.compose.material.SnackbarDuration
-                    // Snackbar { ... }
-                    // You can customize the error message as per your app's requirements
-                    // Here, showing a generic error message for simplicity
-                    // This is just a basic error handling approach, you can customize it based on your app's requirements
+                    error = "Please fill out all fields"
                 } else if (password != confirmPassword) {
-                    // Show error message if password and confirm password do not match
-                    // You can customize the error message as per your app's requirements
-                    // Here, showing a generic error message for simplicity
-                    // This is just a basic error handling approach, you can customize it based on your app's requirements
+                    error = "Passwords must match"
                 } else {
-                    // Form data is valid, send registration request
-
+                    var user = User(firstName, lastName, username, email, password)
+                    registerUser(user)
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -119,4 +103,9 @@ fun RegistrationPage() {
             Text(text = "Register")
         }
     }
+}
+
+private fun registerUser(user: User) {
+    var url = "localhost:8080"
+
 }
