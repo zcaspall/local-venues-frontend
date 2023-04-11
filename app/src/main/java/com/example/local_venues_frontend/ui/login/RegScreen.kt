@@ -1,14 +1,23 @@
 package com.example.local_venues_frontend.ui.login
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.local_venues_frontend.ui.data.User
+import com.example.local_venues_frontend.ui.data.UserApi
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 @Preview
 @Composable
@@ -108,4 +117,18 @@ fun RegistrationPage() {
 private fun registerUser(user: User) {
     var url = "localhost:8080"
 
+    val retrofit = Retrofit.Builder()
+        .baseUrl(url)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val userApi = retrofit.create(UserApi::class.java)
+
+    val call: Call<User> = userApi.createUser(user)
+
+    call!!.enqueue(object : Callback<User> {
+//        override fun onResponse(call: Call<User>, response: Response<User>) {
+//            result.value = response.code();
+//        }
+    })
 }
