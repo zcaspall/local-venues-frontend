@@ -21,7 +21,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 @Preview
 @Composable
-fun RegistrationPage() {
+fun RegScreen() {
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
@@ -30,7 +30,7 @@ fun RegistrationPage() {
     var confirmPassword by remember { mutableStateOf("") }
 
     var error by remember { mutableStateOf("") }
-    val response by remember { mutableStateOf("") }
+    var response = remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -113,11 +113,13 @@ fun RegistrationPage() {
         ) {
             Text(text = "Register")
         }
+
+        Text(text = response.value)
     }
 }
 
 private fun registerUser(user: User, result: MutableState<String>) {
-    var url = "localhost:8080"
+    var url = "http://172.17.80.1:8080/"
 
     val retrofit = Retrofit.Builder()
         .baseUrl(url)
@@ -128,7 +130,7 @@ private fun registerUser(user: User, result: MutableState<String>) {
 
     val call: Call<User> = userApi.createUser(user)
 
-    call!!.enqueue(object : Callback<User> {
+    call.enqueue(object : Callback<User> {
         override fun onResponse(call: Call<User>, response: Response<User>) {
             result.value = response.body().toString()
         }
