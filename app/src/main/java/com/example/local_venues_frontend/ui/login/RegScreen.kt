@@ -30,6 +30,7 @@ fun RegistrationPage() {
     var confirmPassword by remember { mutableStateOf("") }
 
     var error by remember { mutableStateOf("") }
+    val response by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -104,7 +105,8 @@ fun RegistrationPage() {
                     error = "Passwords must match"
                 } else {
                     var user = User(firstName, lastName, username, email, password)
-                    registerUser(user)
+
+                    registerUser(user, response)
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -114,7 +116,7 @@ fun RegistrationPage() {
     }
 }
 
-private fun registerUser(user: User) {
+private fun registerUser(user: User, result: MutableState<String>) {
     var url = "localhost:8080"
 
     val retrofit = Retrofit.Builder()
@@ -127,8 +129,12 @@ private fun registerUser(user: User) {
     val call: Call<User> = userApi.createUser(user)
 
     call!!.enqueue(object : Callback<User> {
-//        override fun onResponse(call: Call<User>, response: Response<User>) {
-//            result.value = response.code();
-//        }
+        override fun onResponse(call: Call<User>, response: Response<User>) {
+            result.value = response.body().toString()
+        }
+
+        override fun onFailure(call: Call<User>, t: Throwable) {
+            result.value = "Error: " + t.message
+        }
     })
 }
