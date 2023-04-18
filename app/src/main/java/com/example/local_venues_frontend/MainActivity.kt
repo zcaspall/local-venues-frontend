@@ -19,6 +19,7 @@ import androidx.compose.material.Text
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.local_venues_frontend.ui.LocalVenuesApp
 import com.example.local_venues_frontend.ui.home.HomeScreen
 import com.example.local_venues_frontend.ui.profile.ProfileScreen
 import com.example.local_venues_frontend.ui.search.SearchScreen
@@ -33,55 +34,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun LocalVenuesApp() {
-    LocalvenuesfrontendTheme {
-        val navController = rememberNavController()
-
-        val currentBackStack by navController.currentBackStackEntryAsState()
-        val currentDestination = currentBackStack?.destination
-
-        val currentScreen = BottomNavScreens.find { it.route == currentDestination?.route } ?: Home
-        Scaffold(
-            bottomBar = {
-                BottomNavigation {
-                    BottomNavScreens.forEach { screen ->
-                        BottomNavigationItem(
-                            icon = { Icon(screen.icon, contentDescription = null) },
-                            label = { Text(screen.route) },
-                            selected = currentScreen == screen,
-                            onClick = { navController.navigate(screen.route) }
-                        )
-                    }
-                }
-            }
-        ) { innerPadding ->
-            LocalVenueNavHost(
-                navController = navController,
-                modifier = Modifier.padding(innerPadding)
-            )
-        }
-    }
-}
-
-@Composable
-fun LocalVenueNavHost(
-    navController: NavHostController,
-    modifier: Modifier = Modifier
-) {
-    NavHost(
-        navController = navController,
-        startDestination = Home.route,
-        modifier = modifier
-    ) {
-        composable(route = Home.route) {
-            HomeScreen()
-        }
-        composable(route = Search.route) {
-            SearchScreen()
-        }
-        composable(route = Profile.route) {
-            ProfileScreen()
-        }
-    }
-}

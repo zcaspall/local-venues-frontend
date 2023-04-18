@@ -1,0 +1,9 @@
+package com.example.local_venues_frontend.model
+
+data class User(
+    val first: String,
+    val last: String,
+    val username: String,
+    val email: String,
+    val password: String
+)

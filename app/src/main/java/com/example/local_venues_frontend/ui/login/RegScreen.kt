@@ -11,8 +11,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+//import com.example.local_venues_frontend.model.User
 import com.example.local_venues_frontend.ui.data.User
 import com.example.local_venues_frontend.ui.data.UserApi
+import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -119,11 +121,15 @@ fun RegScreen() {
 }
 
 private fun registerUser(user: User, result: MutableState<String>) {
-    var url = "http://172.17.80.1:8080/"
+    var url = "http://10.0.2.2:8080/"
+
+    val gson = GsonBuilder()
+        .setLenient()
+        .create();
 
     val retrofit = Retrofit.Builder()
         .baseUrl(url)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
     val userApi = retrofit.create(UserApi::class.java)
@@ -132,7 +138,9 @@ private fun registerUser(user: User, result: MutableState<String>) {
 
     call.enqueue(object : Callback<User> {
         override fun onResponse(call: Call<User>, response: Response<User>) {
-            result.value = response.body().toString()
+            if (response.isSuccessful) {
+                result.value = "SUCCESSFULLY REGISTERED"
+            }
         }
 
         override fun onFailure(call: Call<User>, t: Throwable) {
