@@ -11,10 +11,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-//import com.example.local_venues_frontend.model.User
-import com.example.local_venues_frontend.ui.data.User
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.local_venues_frontend.data.UserRepository
+import com.example.local_venues_frontend.model.User
+//import com.example.local_venues_frontend.ui.data.User
 import com.example.local_venues_frontend.ui.data.UserApi
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,6 +27,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 @Preview
 @Composable
 fun RegScreen() {
+    val userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
+    val composableScope = rememberCoroutineScope()
+
     var firstName by remember { mutableStateOf("") }
     var lastName by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
@@ -107,8 +113,9 @@ fun RegScreen() {
                     error = "Passwords must match"
                 } else {
                     var user = User(firstName, lastName, username, email, password)
-
-                    registerUser(user, response)
+                    composableScope.launch {
+                        userViewModel.createUser(user)
+                    }
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -118,33 +125,4 @@ fun RegScreen() {
 
         Text(text = response.value)
     }
-}
-
-private fun registerUser(user: User, result: MutableState<String>) {
-    var url = "http://10.0.2.2:8080/"
-
-    val gson = GsonBuilder()
-        .setLenient()
-        .create();
-
-    val retrofit = Retrofit.Builder()
-        .baseUrl(url)
-        .addConverterFactory(GsonConverterFactory.create(gson))
-        .build()
-
-    val userApi = retrofit.create(UserApi::class.java)
-
-    val call: Call<User> = userApi.createUser(user)
-
-    call.enqueue(object : Callback<User> {
-        override fun onResponse(call: Call<User>, response: Response<User>) {
-            if (response.isSuccessful) {
-                result.value = "SUCCESSFULLY REGISTERED"
-            }
-        }
-
-        override fun onFailure(call: Call<User>, t: Throwable) {
-            result.value = "Error: " + t.message
-        }
-    })
 }

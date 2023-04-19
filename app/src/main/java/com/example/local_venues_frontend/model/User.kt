@@ -7,3 +7,9 @@ data class User(
     val email: String,
     val password: String
 )
+
+data class Session(
+    val isLoggedIn: Boolean,
+    val user: User
+)
+
