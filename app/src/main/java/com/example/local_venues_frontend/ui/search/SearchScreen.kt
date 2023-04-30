@@ -1,5 +1,6 @@
 package com.example.local_venues_frontend.ui.search
 
+import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,9 +14,15 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import com.example.local_venues_frontend.mapshit.MapActivity
 
 @Composable
 fun SearchScreen() {
+
+    val context = LocalContext.current
+    val localContext = LocalContext.current
+
     var value by remember {
         mutableStateOf("")
     }
@@ -41,7 +48,7 @@ fun SearchScreen() {
             TextButton(onClick = { /*TODO*/ }) {
                 Text("Venues")
             }
-            TextButton(onClick = { /*TODO*/ }) {
+            TextButton(onClick = { localContext.startActivity(Intent(localContext, MapActivity::class.java)) }) {
                 Text("Near Me")
             }
         }
