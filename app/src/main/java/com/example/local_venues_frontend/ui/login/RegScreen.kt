@@ -113,9 +113,7 @@ fun RegScreen() {
                     error = "Passwords must match"
                 } else {
                     var user = User(firstName, lastName, username, email, password)
-                    composableScope.launch {
-                        userViewModel.createUser(user)
-                    }
+                    userViewModel.createUser(user)
                 }
             },
             modifier = Modifier.fillMaxWidth()

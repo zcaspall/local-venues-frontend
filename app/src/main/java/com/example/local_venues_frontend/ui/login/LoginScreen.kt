@@ -8,16 +8,27 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import com.example.local_venues_frontend.model.Auth
+import com.example.local_venues_frontend.model.User
+import com.example.local_venues_frontend.ui.login.RegScreen
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.local_venues_frontend.Registration
 
 
-@Preview
 @Composable
-fun LoginScreen() {
-    var value by remember {
-        mutableStateOf("")
-    }
+fun LoginScreen(
+    modifier: Modifier
+) {
+    val userViewModel: UserViewModel = viewModel(factory = UserViewModel.Factory)
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
 
     Column(
         modifier = Modifier
@@ -27,26 +38,26 @@ fun LoginScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         OutlinedTextField(
-            value = value,
-            onValueChange = { newText ->
-                value = newText
-            },
+            value = username,
+            onValueChange = { username = it },
             label = { Text(text = "Username") },
             placeholder = { Text(text = "Enter your Username")}
         )
         OutlinedTextField(
-            value = value,
-            onValueChange = { newText ->
-                value = newText
-            },
+            value = password,
+            onValueChange = { password = it },
             label = { Text(text = "Password") },
+            visualTransformation = PasswordVisualTransformation(),
             placeholder = { Text(text = "Enter your Password")}
         )
-        Button(onClick = {  }) {
+        Button(onClick = {
+            val auth = Auth(username, password)
+            userViewModel.loginUser(auth)
+        }) {
             Text("Submit")
         }
-        TextButton(onClick = { /*TODO*/ }) {
-            
+        TextButton(onClick = { userViewModel.NavigateToRegistration() }) {
+            Text("Register")
         }
     }
 }

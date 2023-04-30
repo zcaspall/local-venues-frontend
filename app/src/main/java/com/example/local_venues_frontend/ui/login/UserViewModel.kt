@@ -1,6 +1,5 @@
 package com.example.local_venues_frontend.ui.login
 
-import android.text.Spannable.Factory
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -12,18 +11,20 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.local_venues_frontend.LocalVenuesApplication
 import com.example.local_venues_frontend.data.UserRepository
+import com.example.local_venues_frontend.model.Auth
 import com.example.local_venues_frontend.model.Session
 import com.example.local_venues_frontend.model.User
 import kotlinx.coroutines.launch
-import retrofit2.Call
 import retrofit2.HttpException
 
 sealed interface UserState {
-    data class LoggedIn(val loggedIn: Boolean) : UserState
+    data class LoggedIn(val session: Session): UserState
 
     object NotLoggedIn : UserState
 
     object Error : UserState
+
+    object LoggingIn : UserState
 }
 class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     var userState: UserState by mutableStateOf(UserState.NotLoggedIn)
@@ -33,21 +34,49 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
         getSessionData()
     }
 
-    fun getSessionData() {
+    private fun getSessionData() {
         viewModelScope.launch {
             userState = UserState.NotLoggedIn
+            val session: Session = userRepository.getSessionData()
             userState = try {
-                val session = userRepository.getSessionData()
-                UserState.LoggedIn(session.isLoggedIn)
+                if (session.isLoggedIn) {
+                    UserState.LoggedIn(session)
+                } else {
+                    UserState.NotLoggedIn
+                }
             } catch (e: HttpException) {
                 UserState.Error
             }
         }
     }
 
+    fun loginUser(auth: Auth) {
+        viewModelScope.launch {
+            try {
+                userRepository.loginUser(auth)
+                val session: Session = userRepository.getSessionData()
+                userState = UserState.LoggedIn(session)
+            } catch (e: HttpException) {
+                userState = UserState.Error
+            }
+        }
+    }
+
+    fun NavigateToRegistration() {
+        viewModelScope.launch {
+            userState = UserState.LoggingIn
+        }
+    }
+
     fun createUser(user: User) {
         viewModelScope.launch {
-            userRepository.createUser(user)
+            try {
+                userRepository.createUser(user)
+                userState = UserState.NotLoggedIn
+            } catch (e: HttpException) {
+                userState = UserState.Error
+            }
+
         }
     }
 

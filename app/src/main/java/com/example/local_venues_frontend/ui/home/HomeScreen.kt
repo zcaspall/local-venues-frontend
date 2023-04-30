@@ -8,6 +8,7 @@ import com.example.local_venues_frontend.ui.login.UserState
 
 @Composable
 fun HomeScreen(
+    modifier: Modifier
 ) {
-    Text("HOME")
+    Text(text = "HOME SCREEN")
 }
