@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">local-venues-frontend</string>
+    <string name="sample_text">"Walter White couldn't have done it without me"</string>
 </resources>
