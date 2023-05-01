@@ -7,7 +7,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
 
 interface Destination {
-    val icon: ImageVector
+    val icon: ImageVector?
     val route: String
 }
 
@@ -24,6 +24,16 @@ object Search : Destination {
 object Profile : Destination {
     override val icon = Icons.Default.Person
     override val route = "profile"
+}
+
+object Registration : Destination {
+    override val icon: ImageVector? = null
+    override val route = "registration"
+}
+
+object Login : Destination {
+    override val icon: ImageVector? = null
+    override val route: String = "Login"
 }
 
 
