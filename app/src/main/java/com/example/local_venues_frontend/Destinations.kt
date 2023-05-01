@@ -26,4 +26,5 @@ object Profile : Destination {
     override val route = "profile"
 }
 
+
 val BottomNavScreens = listOf(Home, Search, Profile)
