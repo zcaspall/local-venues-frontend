@@ -53,9 +53,11 @@ class UserViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun loginUser(auth: Auth) {
         viewModelScope.launch {
             try {
-                userRepository.loginUser(auth)
-                val session: Session = userRepository.getSessionData()
-                userState = UserState.LoggedIn(session)
+                val response = userRepository.loginUser(auth)
+                if (response.isSuccessful) {
+                    val session: Session = userRepository.getSessionData()
+                    userState = UserState.LoggedIn(session)
+                }
             } catch (e: HttpException) {
                 userState = UserState.Error
             }
